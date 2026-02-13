@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        # Account Service Route
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+            - Path=/accounts/**
+          filters:
+            - RewritePath=/accounts/(?<segment>.*), /account-service/api/v1/accounts/$\{segment}
+            - AddRequestHeader=X-Request-ID, ${UUID}
+
+        # Transfer Service Route
+        - id: transfer-service
+          uri: lb://transfer-service
+          predicates:
+            - Path=/transfers/**
+          filters:
+            - RewritePath=/transfers/(?<segment>.*), /transfer-service/api/v1/transfers/$\{segment}
+            - AddRequestHeader=X-Request-ID, ${UUID}
+
+        # Notification Service Route
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/notifications/**
+          filters:
+            - RewritePath=/notifications/(?<segment>.*), /notification-service/api/v1/notifications/$\{segment}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    preferIpAddress: true
+    instance-id: ${spring.application.name}:${random.value}
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
+    com.bankingledger: DEBUG
