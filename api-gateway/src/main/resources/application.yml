@@ -14,7 +14,7 @@ spring:
           predicates:
             - Path=/accounts/**
           filters:
-            - RewritePath=/accounts(?:/(?<segment>.*))?, /account-service/api/v1/accounts/$\{segment}
+            - RewritePath=/accounts(?<remainder>.*), /account-service/api/v1/accounts$\{remainder}
 
         # Transfer Service Route
         - id: transfer-service
@@ -22,7 +22,7 @@ spring:
           predicates:
             - Path=/transfers/**
           filters:
-            - RewritePath=/transfers(?:/(?<segment>.*))?, /transfer-service/api/v1/transfers/$\{segment}
+            - RewritePath=/transfers(?<remainder>.*), /transfer-service/api/v1/transfers$\{remainder}
 
         # Notification Service Route
         - id: notification-service
@@ -30,7 +30,7 @@ spring:
           predicates:
             - Path=/notifications/**
           filters:
-            - RewritePath=/notifications/?(?<segment>.*), /notification-service/api/v1/notifications/$\{segment}
+            - RewritePath=/notifications(?<remainder>.*), /notification-service/api/v1/notifications$\{remainder}
 
 eureka:
   client:
