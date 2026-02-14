@@ -14,8 +14,7 @@ spring:
           predicates:
             - Path=/accounts/**
           filters:
-            - RewritePath=/accounts/(?<segment>.*), /account-service/api/v1/accounts/$\{segment}
-            - AddRequestHeader=X-Request-ID, ${UUID}
+            - RewritePath=/accounts(?:/(?<segment>.*))?, /account-service/api/v1/accounts/$\{segment}
 
         # Transfer Service Route
         - id: transfer-service
@@ -23,8 +22,7 @@ spring:
           predicates:
             - Path=/transfers/**
           filters:
-            - RewritePath=/transfers/(?<segment>.*), /transfer-service/api/v1/transfers/$\{segment}
-            - AddRequestHeader=X-Request-ID, ${UUID}
+            - RewritePath=/transfers(?:/(?<segment>.*))?, /transfer-service/api/v1/transfers/$\{segment}
 
         # Notification Service Route
         - id: notification-service
@@ -32,12 +30,12 @@ spring:
           predicates:
             - Path=/notifications/**
           filters:
-            - RewritePath=/notifications/(?<segment>.*), /notification-service/api/v1/notifications/$\{segment}
+            - RewritePath=/notifications/?(?<segment>.*), /notification-service/api/v1/notifications/$\{segment}
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://eureka-server:8761/eureka/
   instance:
     preferIpAddress: true
     instance-id: ${spring.application.name}:${random.value}
